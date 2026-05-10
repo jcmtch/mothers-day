@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Mother's Day!</title>
+    
+    <!-- Load Tailwind CSS directly from CDN for easy setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Custom Animations */
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) scale(1.2) rotate(360deg); opacity: 0; }
+        }
+        
+        .animate-float {
+            animation: floatUp linear infinite;
+        }
+        
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-gentle-bounce {
+            animation: gentleBounce 3s ease-in-out infinite;
+        }
+
+        /* Smooth fade in for the card */
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-rose-100 to-pink-200 flex items-center justify-center overflow-hidden font-sans selection:bg-rose-300 selection:text-white">
+
+    <!-- Container for floating hearts (injected via JS) -->
+    <div id="hearts-container" class="absolute inset-0 pointer-events-none z-0 hidden"></div>
+
+    <!-- Main Content Container -->
+    <div class="relative z-10 p-6 w-full max-w-2xl mx-auto text-center">
+        
+        <!-- ================= CLOSED STATE ================= -->
+        <button id="closed-card" class="group relative inline-flex flex-col items-center justify-center p-8 bg-white/80 backdrop-blur-md border-2 border-rose-200 rounded-3xl shadow-xl hover:shadow-rose-300/50 hover:bg-white transition-all duration-500 ease-out transform hover:scale-105 animate-gentle-bounce cursor-pointer">
+            <!-- Small Heart Badge -->
+            <div class="absolute -top-4 -right-4 bg-rose-500 text-white p-3 rounded-full shadow-lg group-hover:rotate-12 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </div>
+            
+            <!-- Mail Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-rose-400 mb-4 group-hover:text-rose-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/><path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/></svg>
+            
+            <h2 class="text-2xl md:text-3xl font-serif text-rose-600 font-medium tracking-wide">
+                For You, Mom
+            </h2>
+            <p class="text-rose-400 mt-2 font-medium">Tap to open your card 💌</p>
+        </button>
+
+
+        <!-- ================= OPEN STATE (Initially Hidden) ================= -->
+        <div id="open-card" class="hidden">
+            <div class="bg-white/90 backdrop-blur-sm p-8 md:p-14 rounded-[3rem] shadow-2xl border border-white/50 relative fade-in">
+                
+                <!-- Decorative Corner Stars -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="absolute top-8 left-8 w-8 h-8 text-yellow-400 animate-pulse" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="absolute bottom-8 right-8 w-8 h-8 text-yellow-400 animate-pulse" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+
+                <!-- Bouncing Heart -->
+                <div class="flex justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-rose-500 fill-rose-500 animate-bounce" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </div>
+
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 mb-6 drop-shadow-sm font-serif leading-tight">
+                    HAPPY MOTHERS DAY!
+                </h1>
+                
+                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-rose-300 to-transparent mx-auto my-8 rounded-full"></div>
+                
+                <h2 class="text-2xl md:text-4xl text-rose-600 font-bold tracking-wide italic">
+                    YOU'RE AN AMAZING MOM!
+                </h2>
+
+                <p class="mt-8 text-rose-400/80 font-medium text-lg max-w-md mx-auto">
+                    Thank you for everything you do. I love you! ❤️
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        const closedCard = document.getElementById('closed-card');
+        const openCard = document.getElementById('open-card');
+        const heartsContainer = document.getElementById('hearts-container');
+
+        closedCard.addEventListener('click', () => {
+            // Hide closed card and show open card
+            closedCard.style.display = 'none';
+            openCard.classList.remove('hidden');
+            
+            // Show and generate floating hearts background
+            heartsContainer.classList.remove('hidden');
+            
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('div');
+                const size = Math.random() * 20 + 15;
+                const animDuration = Math.random() * 4 + 4;
+                const animDelay = Math.random() * 2;
+                
+                heart.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(251, 113, 133, 0.4); fill: rgba(253, 164, 175, 0.3); width: 100%; height: 100%;"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+                
+                heart.className = 'absolute animate-float';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.bottom = '-50px';
+                heart.style.width = `${size}px`;
+                heart.style.height = `${size}px`;
+                heart.style.animationDuration = `${animDuration}s`;
+                heart.style.animationDelay = `${animDelay}s`;
+                
+                heartsContainer.appendChild(heart);
+            }
+        });
+    </script>
+</body>
+</html>
