@@ -5,92 +5,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Mother's Day!</title>
     
-    <!-- Load Tailwind CSS directly from CDN for easy setup -->
+    <!-- Load Tailwind CSS directly from CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Elegant Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        cursive: ['"Great Vibes"', 'cursive'],
+                    },
+                    colors: {
+                        champagne: '#F7E7CE',
+                        rosewood: '#65000B',
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        /* Custom Animations */
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(-20vh) scale(1.2) rotate(360deg); opacity: 0; }
-        }
-        
-        .animate-float {
-            animation: floatUp linear infinite;
-        }
-        
-        @keyframes gentleBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .animate-gentle-bounce {
-            animation: gentleBounce 3s ease-in-out infinite;
+        /* Base Scene Settings */
+        body {
+            perspective: 1000px;
         }
 
-        /* Smooth fade in for the card */
-        .fade-in {
-            animation: fadeIn 1s ease-out forwards;
+        /* Smooth Background Transition */
+        #bg-layer {
+            transition: opacity 1.5s ease-in-out, background 1.5s ease-in-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        /* Envelope Hover & Pulse Effects */
+        .envelope-glow {
+            box-shadow: 0 0 25px rgba(251, 113, 133, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.5);
+            transition: all 0.4s ease;
+        }
+        #envelope-container:hover .envelope-glow {
+            box-shadow: 0 0 40px rgba(251, 113, 133, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.6);
+            transform: translateY(-5px);
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .animate-subtle-pulse {
+            animation: subtlePulse 3s ease-in-out infinite;
+        }
+
+        /* Shimmer Effect on Gold Borders */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .gold-shimmer {
+            background: linear-gradient(90deg, #d4af37 0%, #fff2cd 25%, #d4af37 50%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+
+        /* 3D Envelope Opening Transition */
+        .envelope-opening {
+            animation: openEnvelope 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes openEnvelope {
+            0% { transform: scale(1) rotateX(0deg); opacity: 1; }
+            40% { transform: scale(1.1) rotateX(20deg); opacity: 0.8; }
+            100% { transform: scale(1.5) rotateX(90deg) translateY(-100px); opacity: 0; visibility: hidden; }
+        }
+
+        /* Elegant Card Reveal */
+        .card-hidden {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95) rotateX(-10deg);
+            pointer-events: none;
+        }
+        .card-revealed {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+            pointer-events: auto;
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Particle Animations (Hearts & Light Orbs) */
+        @keyframes floatAndSway {
+            0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: var(--max-opacity); }
+            90% { opacity: var(--max-opacity); }
+            100% { transform: translateY(-20vh) translateX(var(--sway-distance)) rotate(var(--rotation)); opacity: 0; }
+        }
+        .particle {
+            position: absolute;
+            animation: floatAndSway var(--duration) linear forwards;
+        }
+
+        /* Burst Animation when opening */
+        @keyframes burstOut {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+        }
+        .burst-particle {
+            position: absolute;
+            animation: burstOut 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-pink-100 via-rose-100 to-pink-200 flex items-center justify-center overflow-hidden font-sans selection:bg-rose-300 selection:text-white">
+<body class="min-h-screen flex items-center justify-center overflow-hidden font-serif selection:bg-rose-300 selection:text-white bg-black m-0 p-0">
 
-    <!-- Container for floating hearts (injected via JS) -->
-    <div id="hearts-container" class="absolute inset-0 pointer-events-none z-0 hidden"></div>
+    <!-- Dynamic Background Layer -->
+    <div id="bg-layer" class="absolute inset-0 bg-gradient-to-br from-pink-100 via-rose-50 to-pink-200 z-0"></div>
 
-    <!-- Main Content Container -->
-    <div class="relative z-10 p-6 w-full max-w-2xl mx-auto text-center">
+    <!-- Particle Container -->
+    <div id="particles-container" class="absolute inset-0 pointer-events-none z-10"></div>
+
+    <!-- Scene Container -->
+    <div class="relative z-20 w-full max-w-3xl mx-auto p-4 flex items-center justify-center h-screen">
         
-        <!-- ================= CLOSED STATE ================= -->
-        <button id="closed-card" class="group relative inline-flex flex-col items-center justify-center p-8 bg-white/80 backdrop-blur-md border-2 border-rose-200 rounded-3xl shadow-xl hover:shadow-rose-300/50 hover:bg-white transition-all duration-500 ease-out transform hover:scale-105 animate-gentle-bounce cursor-pointer">
-            <!-- Small Heart Badge -->
-            <div class="absolute -top-4 -right-4 bg-rose-500 text-white p-3 rounded-full shadow-lg group-hover:rotate-12 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <!-- ================= CLOSED STATE: LUXURY ENVELOPE ================= -->
+        <div id="envelope-container" class="absolute cursor-pointer animate-subtle-pulse">
+            <div class="envelope-glow relative w-72 md:w-96 h-52 md:h-64 bg-white rounded-lg border border-rose-100 flex flex-col items-center justify-center overflow-hidden">
+                
+                <!-- Envelope Flap Illusion (CSS Borders) -->
+                <div class="absolute top-0 left-0 w-full h-full border-[16px] border-transparent border-t-rose-50 border-x-white border-b-white/50 opacity-90"></div>
+                <div class="absolute top-0 left-0 w-full h-full border-[1px] border-rose-200/50"></div>
+                
+                <!-- Gold Accent Frame -->
+                <div class="absolute inset-3 border border-[#d4af37]/30 rounded pointer-events-none"></div>
+
+                <!-- Wax Seal -->
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-rose-600 to-rose-800 rounded-full shadow-[0_4px_15px_rgba(159,18,57,0.5)] border-2 border-rose-900/20 flex items-center justify-center transform transition-transform group-hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-rose-100 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </div>
+                    <span class="mt-4 font-cursive text-2xl md:text-3xl text-rose-800 tracking-wider">For Mom</span>
+                    <span class="text-xs uppercase tracking-[0.3em] text-rose-400 mt-2 font-sans font-semibold">Tap to Open</span>
+                </div>
+                
+                <!-- Subtle corner textures -->
+                <svg class="absolute top-2 left-2 w-6 h-6 text-[#d4af37]/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 4v6h6M4 4l6 6"/></svg>
+                <svg class="absolute bottom-2 right-2 w-6 h-6 text-[#d4af37]/40 transform rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 4v6h6M4 4l6 6"/></svg>
             </div>
-            
-            <!-- Mail Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-rose-400 mb-4 group-hover:text-rose-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/><path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/></svg>
-            
-            <h2 class="text-2xl md:text-3xl font-serif text-rose-600 font-medium tracking-wide">
-                For You, Mom
-            </h2>
-            <p class="text-rose-400 mt-2 font-medium">Tap to open your card 💌</p>
-        </button>
+        </div>
 
-
-        <!-- ================= OPEN STATE (Initially Hidden) ================= -->
-        <div id="open-card" class="hidden">
-            <div class="bg-white/90 backdrop-blur-sm p-8 md:p-14 rounded-[3rem] shadow-2xl border border-white/50 relative fade-in">
+        <!-- ================= OPEN STATE: ELEGANT CARD ================= -->
+        <div id="open-card" class="card-hidden absolute w-full max-w-2xl">
+            <!-- Glassmorphism Container -->
+            <div class="relative bg-white/70 backdrop-blur-xl border border-white shadow-[0_20px_50px_rgba(225,29,72,0.15)] rounded-3xl p-8 md:p-16 text-center overflow-hidden">
                 
-                <!-- Decorative Corner Stars -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="absolute top-8 left-8 w-8 h-8 text-yellow-400 animate-pulse" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                
-                <svg xmlns="http://www.w3.org/2000/svg" class="absolute bottom-8 right-8 w-8 h-8 text-yellow-400 animate-pulse" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                <!-- Decorative Corner Flourishes -->
+                <svg class="absolute top-6 left-6 w-12 h-12 text-rose-300 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5"><path d="M12 4c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/><path d="M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4z"/></svg>
+                <svg class="absolute bottom-6 right-6 w-12 h-12 text-rose-300 opacity-60 transform rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5"><path d="M12 4c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/><path d="M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4z"/></svg>
 
-                <!-- Bouncing Heart -->
+                <!-- Floating Center Accent -->
                 <div class="flex justify-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-rose-500 fill-rose-500 animate-bounce" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-rose-200 blur-xl rounded-full opacity-50 animate-pulse"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 w-16 h-16 text-rose-500 fill-rose-500 drop-shadow-md" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </div>
                 </div>
 
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 mb-6 drop-shadow-sm font-serif leading-tight">
-                    HAPPY MOTHERS DAY!
+                <!-- Typography Setup -->
+                <h2 class="text-xl md:text-2xl text-rose-400 font-sans tracking-[0.2em] uppercase mb-2">Wishing You A</h2>
+                
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-cursive text-transparent bg-clip-text bg-gradient-to-r from-rose-600 via-pink-500 to-rose-600 py-2 drop-shadow-sm mb-4 leading-normal">
+                    Happy Mother's Day
                 </h1>
                 
-                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-rose-300 to-transparent mx-auto my-8 rounded-full"></div>
+                <!-- Gold Divider -->
+                <div class="flex items-center justify-center gap-4 my-8">
+                    <div class="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent to-[#d4af37]"></div>
+                    <svg class="w-4 h-4 text-[#d4af37]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                    <div class="h-[1px] w-16 md:w-24 bg-gradient-to-l from-transparent to-[#d4af37]"></div>
+                </div>
                 
-                <h2 class="text-2xl md:text-4xl text-rose-600 font-bold tracking-wide italic">
-                    YOU'RE AN AMAZING MOM!
-                </h2>
+                <!-- Heartfelt Message -->
+                <p class="text-xl md:text-3xl text-gray-700 leading-relaxed font-serif italic font-semibold px-4">
+                    "To the world, you are a mother.<br>
+                    <span class="gold-shimmer font-bold mt-2 inline-block">But to our family, you are the world."</span>
+                </p>
 
-                <p class="mt-8 text-rose-400/80 font-medium text-lg max-w-md mx-auto">
-                    Thank you for everything you do. I love you! ❤️
+                <p class="mt-8 text-rose-500/80 font-sans text-sm md:text-base max-w-md mx-auto tracking-wide">
+                    Thank you for your endless love, patience, and warmth. 
+                    I love you more than words can say.
                 </p>
             </div>
         </div>
@@ -98,36 +203,107 @@
 
     <!-- Application Logic -->
     <script>
-        const closedCard = document.getElementById('closed-card');
+        const envelopeContainer = document.getElementById('envelope-container');
         const openCard = document.getElementById('open-card');
-        const heartsContainer = document.getElementById('hearts-container');
+        const bgLayer = document.getElementById('bg-layer');
+        const particlesContainer = document.getElementById('particles-container');
 
-        closedCard.addEventListener('click', () => {
-            // Hide closed card and show open card
-            closedCard.style.display = 'none';
-            openCard.classList.remove('hidden');
-            
-            // Show and generate floating hearts background
-            heartsContainer.classList.remove('hidden');
-            
-            for (let i = 0; i < 30; i++) {
-                const heart = document.createElement('div');
-                const size = Math.random() * 20 + 15;
-                const animDuration = Math.random() * 4 + 4;
-                const animDelay = Math.random() * 2;
+        // SVG templates for particles
+        const heartSVG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+        const starSVG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>`;
+
+        function createBurstEffect(x, y) {
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'burst-particle text-rose-400';
                 
-                heart.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(251, 113, 133, 0.4); fill: rgba(253, 164, 175, 0.3); width: 100%; height: 100%;"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+                // Randomize burst direction and distance
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 150;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
                 
-                heart.className = 'absolute animate-float';
-                heart.style.left = `${Math.random() * 100}%`;
-                heart.style.bottom = '-50px';
-                heart.style.width = `${size}px`;
-                heart.style.height = `${size}px`;
-                heart.style.animationDuration = `${animDuration}s`;
-                heart.style.animationDelay = `${animDelay}s`;
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.left = `50%`;
+                particle.style.top = `50%`;
+                particle.style.width = `${Math.random() * 15 + 10}px`;
+                particle.innerHTML = Math.random() > 0.5 ? heartSVG : starSVG;
                 
-                heartsContainer.appendChild(heart);
+                envelopeContainer.appendChild(particle);
+                
+                // Cleanup burst particles
+                setTimeout(() => particle.remove(), 1000);
             }
+        }
+
+        function spawnBackgroundParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Random properties
+            const isHeart = Math.random() > 0.3;
+            const size = Math.random() * 20 + 10;
+            const startX = Math.random() * 100;
+            const duration = Math.random() * 8 + 6; // 6 to 14 seconds
+            const swayDistance = (Math.random() - 0.5) * 200; // -100px to 100px
+            const rotation = (Math.random() - 0.5) * 360;
+            const maxOpacity = Math.random() * 0.4 + 0.1; // 0.1 to 0.5
+            
+            // Styling
+            particle.innerHTML = isHeart ? heartSVG : starSVG;
+            particle.style.left = `${startX}vw`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Colors: mix of soft whites, pinks, and golds
+            const colors = ['#fecdd3', '#fda4af', '#fb7185', '#fef08a', '#ffffff'];
+            particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+            if(isHeart) particle.style.filter = `drop-shadow(0 0 8px ${particle.style.color})`;
+            
+            // Custom CSS vars for animation
+            particle.style.setProperty('--duration', `${duration}s`);
+            particle.style.setProperty('--sway-distance', `${swayDistance}px`);
+            particle.style.setProperty('--rotation', `${rotation}deg`);
+            particle.style.setProperty('--max-opacity', maxOpacity);
+            
+            particlesContainer.appendChild(particle);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                if (particlesContainer.contains(particle)) {
+                    particle.remove();
+                }
+            }, duration * 1000);
+        }
+
+        // Handle Card Opening
+        envelopeContainer.addEventListener('click', (e) => {
+            // 1. Create a magical burst effect from the center
+            const rect = envelopeContainer.getBoundingClientRect();
+            createBurstEffect();
+
+            // 2. Animate envelope away
+            envelopeContainer.classList.add('envelope-opening');
+            
+            // 3. Shift background to a deeper, more romantic sunset-like gradient
+            bgLayer.classList.remove('from-pink-100', 'via-rose-50', 'to-pink-200');
+            bgLayer.classList.add('from-rose-200', 'via-pink-100', 'to-rose-300');
+
+            // 4. Reveal the card with a slight delay
+            setTimeout(() => {
+                envelopeContainer.style.display = 'none';
+                openCard.classList.remove('card-hidden');
+                openCard.classList.add('card-revealed');
+                
+                // 5. Start continuous beautiful particle system
+                setInterval(spawnBackgroundParticle, 300);
+                
+                // Initial burst of background particles
+                for(let i=0; i<15; i++) {
+                    setTimeout(spawnBackgroundParticle, Math.random() * 2000);
+                }
+            }, 800); // Wait for envelope to mostly disappear
         });
     </script>
 </body>
